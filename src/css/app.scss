@@ -1,0 +1,62 @@
+@import "./fonts";
+
+body {
+  font-family: "Montserrat";
+}
+
+a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.scroll {
+  right: 0;
+  width: 100vw !important;
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #1a1a1a;
+  }
+}
+
+.absolute-full {
+  right: 0 !important;
+}
+
+.q-btn {
+  border-radius: 0 !important;
+}
+
+.disabled,
+[disabled] {
+  opacity: 0.5 !important;
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition-delay: 300ms;
+}
+
+.fade-scale-enter,
+.fade-scale-leave-to {
+  transform: translate3d(0, 400px, 0) scale(0);
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 500ms ease-in-out;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
