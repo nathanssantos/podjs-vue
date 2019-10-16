@@ -61,7 +61,11 @@ module.exports = function (ctx) {
         'QSpace',
         'QSpinnerAudio',
         'QAvatar',
-        'QFooter'
+        'QFooter',
+        'QDialog',
+        'QCard',
+        'QCardSection',
+        'QImg'
       ],
 
       directives: [

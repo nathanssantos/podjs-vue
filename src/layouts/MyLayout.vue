@@ -27,30 +27,36 @@
       </transition>
     </q-page-container>
 
-    <q-footer
-      elevated
-      class="flex items-center q-pa-sm q-px-md app-footer"
-      style="background: #1a1a1a;"
-    >
-      <q-avatar size="100px" square class="q-mr-md">
-        <transition name="fade" mode="out-in">
-          <img :src="nowPlaying.image" v-if="nowPlaying.image" />
-        </transition>
-      </q-avatar>
-      <q-item-label
-        overline
-        class="player__title text-primary text-uppercase"
-      >{{ nowPlaying.title }}</q-item-label>
-      <q-media-player autoplay color="primary" type="audio" :source="nowPlaying.audio">
-        <template v-slot:spinner>
-          <transition name="fade" mode="out-in">
-            <div class="loader flex flex-center">
-              <q-spinner-audio size="60px" color="primary" />
-            </div>
-          </transition>
-        </template>
-      </q-media-player>
-    </q-footer>
+    <transition name="fade-slide" mode="out-in">
+      <q-footer
+        elevated
+        class="flex items-center q-pa-sm q-px-md app-footer"
+        style="background: #1a1a1a;"
+        v-if="nowPlaying.audio"
+      >
+        <q-avatar size="100px" square class="q-mr-md">
+          <q-img
+            square
+            style="width: 100px; height: 100px;"
+            class="episode-card__image"
+            :src="nowPlaying.image"
+          />
+        </q-avatar>
+        <q-item-label
+          overline
+          class="player__title text-primary text-uppercase"
+        >{{ nowPlaying.title }}</q-item-label>
+        <q-media-player autoplay color="primary" type="audio" :source="nowPlaying.audio">
+          <template v-slot:spinner>
+            <transition name="fade" mode="out-in">
+              <div class="loader flex flex-center">
+                <q-spinner-audio size="60px" color="primary" />
+              </div>
+            </transition>
+          </template>
+        </q-media-player>
+      </q-footer>
+    </transition>
   </q-layout>
 </template>
 

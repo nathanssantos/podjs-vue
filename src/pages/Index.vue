@@ -1,86 +1,76 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="flex column flex-start">
+    <!-- <div class="text-h4 text-white title">Meus Podcasts</div> -->
+    <!-- <q-list dark class="podcast-list full-width q-mb-xl">
+      
+    </q-list>-->
+    <div class="text-h4 text-white title">Top 100 Podcasts</div>
+
     <q-list dark class="podcast-list full-width">
-      <q-item
-        v-for="podcast in storeFeed"
-        :key="podcast.name"
-        class="podcast-list__item q-pa-none"
-        style="font-size: 0.7rem; font-weight: 300;"
-        clickable
-        v-ripple
-        @click="getPodcast(podcast.id)"
-      >
-        <q-item-section style="justify-content: flex-start;">
-          <img class="full-width" :src="podcast.artworkUrl100" />
-          <q-item-label class="flex column justify-between q-pa-xs">
-            {{ podcast.name }}
-            <small class="block q-mt-xs">{{ podcast.artistName }}</small>
-          </q-item-label>
-        </q-item-section>
-      </q-item>
+      <EpisodeCard v-for="podcast in storeFeed" :key="podcast.name" :podcast="podcast" />
     </q-list>
-    <transition name="fade" mode="out-in">
-      <div
-        v-if="displaySplashScreen"
-        class="fixed-full flex flex-center splash-screen text-primary text-h1 text-bold"
-        :style="`background: #212121; z-index: 9999; transition: all 2s ease-in-out; ${ logo.style }`"
-      >
-        {{ logo.text }}
-        <q-spinner-audio color="primary" size="150px" class="q-mb-xl" />
-      </div>
-    </transition>
   </q-page>
 </template>
 
 <script>
+import EpisodeCard from "../components/EpisodeCard";
 import { mapState } from "vuex";
 export default {
   name: "PageIndex",
+  components: {
+    EpisodeCard
+  },
   data() {
-    return {
-      displaySplashScreen: true,
-      logo: {
-        text: "",
-        style: ""
-      }
-    };
+    return {};
   },
   created() {
     this.$store.dispatch("podcastStore/getStoreFeed");
   },
   computed: {
     ...mapState("podcastStore", {
-      storeFeed: state => state.storeFeed
+      storeFeed: state => state.storeFeed,
+      podcastData: state => state.fetchedPodcast.data
     })
-  },
-  methods: {
-    getPodcast(id) {
-      this.$store.dispatch("podcastStore/getPodcast", id);
-    },
-    splashScreen(text) {
-      const logo = text.split("");
-      const interval = 350;
-      logo.forEach((l, i) =>
-        setTimeout(() => (this.logo.text += l), i * interval)
-      );
-      setTimeout(
-        () => (this.logo.style = "text-shadow: 0 0 15px rgb(2, 123, 227);"),
-        logo.length * interval
-      );
-    }
-  },
-  mounted() {
-    setTimeout(() => this.splashScreen("pod.js"), 1000);
-    setTimeout(() => (this.displaySplashScreen = false), 6200);
   }
 };
 </script>
 <style lang="scss">
+.title {
+  text-align: left;
+  align-self: flex-start;
+  margin-top: 16px;
+  font-weight: 300;
+  margin-left: 32px;
+  position: relative;
+  &:before {
+    content: "";
+    width: 8px;
+    height: 40px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(-16px, -50%);
+    background: var(--q-color-primary);
+  }
+}
+
 .podcast-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   padding: 1rem;
+
+  &__item {
+    overflow: hidden;
+
+    &:hover {
+      .podcast-list__item__actions {
+        transform: translate3d(0, 0, 0);
+        box-shadow: 0 4px 5px -2px rgba(0, 0, 0, 0.35),
+          0 7px 10px 1px rgba(0, 0, 0, 0.35), 0 2px 16px 1px rgba(0, 0, 0, 0.35);
+      }
+    }
+  }
 
   @media (min-width: 514px) {
     grid-template-columns: repeat(3, 1fr);

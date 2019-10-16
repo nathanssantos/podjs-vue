@@ -5,6 +5,7 @@ export default {
     state: {
         storeFeed: [],
         fetchedPodcast: {
+            info: {},
             episodes: []
         },
         nowPlaying: {
@@ -14,15 +15,16 @@ export default {
         }
     },
     mutations: {
-        STORE_FEED_FETCHED(state, storeFeed) {
+        STORE_FEED_FETCHED(state, storeFeed = []) {
             state.storeFeed = storeFeed
+            storeFeed.forEach(i => i.loading = false)
         },
-        PODCAST_FETCHED(state, episode) {
-            state.fetchedPodcast.episodes = episode
-            console.log(state.fetchedPodcast)
+        PODCAST_FETCHED(state, { info = {}, episodes = [] } = {}) {
+            state.fetchedPodcast.episodes = episodes
+            state.fetchedPodcast.info = info
             this.$router.replace("podcast")
         },
-        PLAYING_PODCAST(state, episode) {
+        PLAYING_PODCAST(state, episode = {}) {
             state.nowPlaying.audio = episode.audio
             state.nowPlaying.title = episode.title
             state.nowPlaying.image = episode.image
@@ -47,7 +49,15 @@ export default {
                         .then(r => {
                             const parser = new DOMParser(), //Parse selected podcast rss feed to xml
                                 xml = parser.parseFromString(r.data, "application/xml"),
-                                episodes = []
+                                payload = {
+                                    info: {},
+                                    episodes: []
+                                }
+
+                            if (xml.querySelector("title") != undefined) payload.info.title = xml.querySelector("title").textContent
+                            if (xml.querySelector("channel > description") != undefined) payload.info.description = xml.querySelector("channel > description").textContent
+                            if (xml.querySelector("image url") != undefined) payload.info.image = xml.querySelector("image url").textContent
+                            if (xml.querySelector("author") != undefined) payload.info.author = xml.querySelector("author").textContent
 
                             xml.querySelectorAll("item").forEach(i => { //Extract espisodes data from selected podcast parsed xml 
                                 const episode = {}
@@ -59,15 +69,14 @@ export default {
                                 } else if (xml.querySelector("rss channel image url") != undefined) {
                                     episode.image = xml.querySelector("rss channel image url").textContent
                                 }
-                                episodes.push(episode)
-                                // console.log(i)
+                                payload.episodes.push(episode)
                             })
-                            // console.log(episodes)
-                            if (episodes.length < 1) {
+
+                            if (payload.episodes.length < 1) {
                                 alert("Este podcast não está disponível no momento.")
                                 return
                             }
-                            commit("PODCAST_FETCHED", episodes)
+                            commit("PODCAST_FETCHED", payload)
                         })
                 }).catch(err => {
                     if (err) alert("Este podcast não está disponível no momento.")
