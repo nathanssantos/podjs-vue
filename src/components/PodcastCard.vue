@@ -7,7 +7,7 @@
   >
     <q-item-section
       style="justify-content: flex-start;"
-      @click="getPodcast(podcast.id), loading = true"
+      @click="getPodcast(podcast), loading = true"
     >
       <img class="full-width" :src="podcast.artworkUrl100" />
       <q-item-label class="flex column justify-between q-pa-xs">
@@ -27,7 +27,7 @@
 import { mapState } from "vuex";
 
 export default {
-  name: "EpisodeCard",
+  name: "PodcastCard",
   props: {
     podcast: {
       type: Object,
@@ -37,19 +37,11 @@ export default {
   data() {
     return {
       loading: false
-      // podcastInfoModal: {
-      //   isOpen: false
-      // }
     };
   },
-  computed: {
-    ...mapState("podcastStore", {
-      podcastData: state => state.fetchedPodcast.data
-    })
-  },
   methods: {
-    getPodcast(id) {
-      this.$store.dispatch("podcastStore/getPodcast", id);
+    getPodcast(podcast) {
+      this.$store.dispatch("podcastStore/getPodcast", podcast);
     },
     getPodcastData(id) {
       this.$store.dispatch("podcastStore/getPodcastData", id);

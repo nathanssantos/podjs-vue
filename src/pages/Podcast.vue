@@ -6,9 +6,10 @@
         :src="info.image"
         style="min-height: 200px; min-width: 200px; max-height: 200px; max-width: 200px;"
       />
-      <div class="flex column justify-center q-mb-md">
+      <div class="flex column items-start justify-center q-mb-md">
         <div class="text-h4 q-mb-xs" overline>{{ info.title }}</div>
         <small class="block text-h6" style="margin-left: 2px; font-weight: 300;">{{ info.author }}</small>
+        <q-btn @click="favoritePodcast()" label="Assinar" class="q-mt-md q-px-lg" />
       </div>
       <p style="display: block; width: 100%; font-weight: 300;" v-html="info.description" />
     </header>
@@ -48,12 +49,20 @@ export default {
   computed: {
     ...mapState("podcastStore", {
       episodes: state => state.fetchedPodcast.episodes,
-      info: state => state.fetchedPodcast.info
+      info: state => state.fetchedPodcast.info,
+      data: state => state.fetchedPodcast.data
     })
   },
   methods: {
     playEpisode(episode) {
       this.$store.dispatch("podcastStore/playEpisode", episode);
+    },
+    favoritePodcast() {
+      let favorited = {
+        info: this.info,
+        data: this.data
+      };
+      this.$store.dispatch("podcastStore/favoritePodcast", favorited);
     }
   }
 };

@@ -1,24 +1,26 @@
 <template>
   <q-page class="flex column flex-start">
-    <!-- <div class="text-h4 text-white title">Meus Podcasts</div> -->
-    <!-- <q-list dark class="podcast-list full-width q-mb-xl">
-      
-    </q-list>-->
+    <div v-if="favorites.length > 0">
+      <div class="text-h4 text-white title">Meus Podcasts</div>
+      <q-list dark class="podcast-list full-width q-mb-xl">
+        <PodcastCard v-for="podcast in favorites" :key="podcast.name" :podcast="podcast" />
+      </q-list>
+    </div>
     <div class="text-h4 text-white title">Top 100 Podcasts</div>
 
     <q-list dark class="podcast-list full-width">
-      <EpisodeCard v-for="podcast in storeFeed" :key="podcast.name" :podcast="podcast" />
+      <PodcastCard v-for="podcast in storeFeed" :key="podcast.name" :podcast="podcast" />
     </q-list>
   </q-page>
 </template>
 
 <script>
-import EpisodeCard from "../components/EpisodeCard";
+import PodcastCard from "../components/PodcastCard";
 import { mapState } from "vuex";
 export default {
   name: "PageIndex",
   components: {
-    EpisodeCard
+    PodcastCard
   },
   data() {
     return {};
@@ -29,7 +31,7 @@ export default {
   computed: {
     ...mapState("podcastStore", {
       storeFeed: state => state.storeFeed,
-      podcastData: state => state.fetchedPodcast.data
+      favorites: state => state.favorites
     })
   }
 };

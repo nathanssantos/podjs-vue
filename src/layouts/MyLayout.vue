@@ -46,7 +46,7 @@
           overline
           class="player__title text-primary text-uppercase"
         >{{ nowPlaying.title }}</q-item-label>
-        <q-media-player autoplay color="primary" type="audio" :source="nowPlaying.audio">
+        <q-media-player color="primary" type="audio" :source="nowPlaying.audio">
           <template v-slot:spinner>
             <transition name="fade" mode="out-in">
               <div class="loader flex flex-center">

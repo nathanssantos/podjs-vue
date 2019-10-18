@@ -39,6 +39,9 @@ export default {
       );
     }
   },
+  created() {
+    this.$store.dispatch("podcastStore/loadAppState");
+  },
   mounted() {
     setTimeout(() => this.splashScreen("pod.js"), 1000);
     setTimeout(() => (this.displaySplashScreen = false), 6200);
