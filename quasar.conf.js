@@ -65,7 +65,9 @@ module.exports = function (ctx) {
         'QDialog',
         'QCard',
         'QCardSection',
-        'QImg'
+        'QImg',
+        'QInput',
+        'QVirtualScroll'
       ],
 
       directives: [

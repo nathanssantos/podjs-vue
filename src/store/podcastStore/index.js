@@ -8,39 +8,29 @@ export default {
     fetchedPodcast: {
       info: {},
       episodes: [],
+      filteredEpisodes: [],
       data: {}
     },
     nowPlaying: {
       title: "",
       image: "",
-      audio: ""
+      audio: "",
+      playTime: null
+    }
+  },
+  getters: {
+    getFavorites(state) {
+      let favorites = []
+      state.favorites.forEach(id => state.storeFeed.forEach(i => {
+        if (i.id === id) {
+          i.favorited = true
+          favorites.push(i)
+        }
+      }))
+      return favorites
     }
   },
   mutations: {
-    STORE_FEED_FETCHED(state, storeFeed = []) {
-      state.storeFeed = storeFeed
-      storeFeed.forEach(i => i.loading = false)
-    },
-    PODCAST_FETCHED(state, { info = {}, episodes = [], data = {} } = {}) {
-      state.fetchedPodcast.episodes = episodes
-      state.fetchedPodcast.info = info
-      state.fetchedPodcast.data = data
-      this.$router.replace("podcast")
-    },
-    PLAYING_PODCAST(state, episode = {}) {
-      state.nowPlaying.audio = episode.audio
-      state.nowPlaying.title = episode.title
-      state.nowPlaying.image = episode.image
-    },
-    PODCAST_FAVORITED(state, { data = {} }) {
-      let favorited = data
-      favorited.favorited = true
-      state.favorites.push(favorited)
-
-      console.log(JSON.parse(localStorage.getItem("state")))
-
-      // console.log("Favorites:", state.favorites)
-    },
     APP_STATE_SAVED(state) {
       let savedState = {
         favorites: state.favorites,
@@ -48,10 +38,72 @@ export default {
       }
       localStorage.setItem("state", JSON.stringify(savedState))
     },
+    STORE_FEED_FETCHED(state, storeFeed = []) {
+      state.storeFeed = storeFeed
+      storeFeed.forEach(i => {
+        i.favorited = false
+        i.loading = false
+      })
+    },
+    PODCAST_FETCHED(state, { info = {}, episodes = [], data = {} } = {}) {
+      state.fetchedPodcast.episodes = episodes
+      state.fetchedPodcast.info = info
+      state.fetchedPodcast.data = data
+      this.$router.replace("podcast")
+    },
+    EPISODE_LIST_FILTERED(state, value = "") {
+      if (value.length > 0) {
+        state.fetchedPodcast.filteredEpisodes = state.fetchedPodcast.episodes.filter(
+          item =>
+            item.title.toLowerCase().includes(value.toLowerCase()) ||
+            item.title
+              .toLowerCase()
+              .replace(/[àáâãäå]/, "a")
+              .includes(value.toLowerCase()) ||
+            item.title
+              .toLowerCase()
+              .replace(/[èéêë]/, "e")
+              .includes(value.toLowerCase()) ||
+            item.title
+              .toLowerCase()
+              .replace(/[ìíîï]/, "i")
+              .includes(value.toLowerCase()) ||
+            item.title
+              .toLowerCase()
+              .replace(/[òóôöõ]/, "o")
+              .includes(value.toLowerCase()) ||
+            item.title
+              .toLowerCase()
+              .replace(/[ùúûü]/, "u")
+              .includes(value.toLowerCase())
+        );
+      } else {
+        state.fetchedPodcast.filteredEpisodes = state.fetchedPodcast.episodes
+      }
+    },
+    PLAYING_PODCAST(state, episode = {}) {
+      state.nowPlaying.audio = episode.audio
+      state.nowPlaying.title = episode.title
+      state.nowPlaying.image = episode.image
+    },
+    PODCAST_FAVORITED(state, id = "") {
+      if (!state.favorites.includes(id)) state.favorites.push(id)
+      return
+    },
+    PODCAST_UNFAVORITED(state, id = "") {
+      state.favorites = state.favorites.filter(f => f != id)
+    },
+    PLAYTIME_SAVED(state, playTime) {
+      localStorage.setItem("playTime", JSON.stringify(playTime))
+    },
     APP_STATE_LOADED(state) {
       let loadedState = JSON.parse(localStorage.getItem("state"))
-      state.favorites = loadedState.favorites
-      state.nowPlaying = loadedState.nowPlaying
+      let playTime = JSON.parse(localStorage.getItem("playTime"))
+      if (loadedState) {
+        state.favorites = loadedState.favorites
+        state.nowPlaying = loadedState.nowPlaying
+      }
+      if (playTime) state.nowPlaying.playTime = playTime
     }
   },
   actions: {
@@ -110,16 +162,26 @@ export default {
           return
         })
     },
+    loadAppState({ commit }) {
+      commit("APP_STATE_LOADED")
+    },
+    filterEpisodes({ commit }, value) {
+      commit("EPISODE_LIST_FILTERED", value)
+    },
     playEpisode({ commit }, episode) {
       commit("PLAYING_PODCAST", episode)
       commit("APP_STATE_SAVED")
     },
-    favoritePodcast({ commit }, podcast) {
-      commit("PODCAST_FAVORITED", podcast)
+    favoritePodcast({ commit }, id) {
+      commit("PODCAST_FAVORITED", id)
       commit("APP_STATE_SAVED")
     },
-    loadAppState({ commit }) {
-      commit("APP_STATE_LOADED")
+    unfavoritePodcast({ commit }, id) {
+      commit("PODCAST_UNFAVORITED", id)
+      commit("APP_STATE_SAVED")
+    },
+    savePlayTime({ commit }, playTime) {
+      commit("PLAYTIME_SAVED", playTime)
     }
   }
 }

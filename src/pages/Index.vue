@@ -1,13 +1,12 @@
 <template>
   <q-page class="flex column flex-start">
-    <div v-if="favorites.length > 0">
+    <div v-if="getFavorites.length > 0">
       <div class="text-h4 text-white title">Meus Podcasts</div>
       <q-list dark class="podcast-list full-width q-mb-xl">
-        <PodcastCard v-for="podcast in favorites" :key="podcast.name" :podcast="podcast" />
+        <PodcastCard v-for="podcast in getFavorites" :key="podcast.name" :podcast="podcast" />
       </q-list>
     </div>
     <div class="text-h4 text-white title">Top 100 Podcasts</div>
-
     <q-list dark class="podcast-list full-width">
       <PodcastCard v-for="podcast in storeFeed" :key="podcast.name" :podcast="podcast" />
     </q-list>
@@ -16,23 +15,21 @@
 
 <script>
 import PodcastCard from "../components/PodcastCard";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
   name: "PageIndex",
   components: {
     PodcastCard
   },
-  data() {
-    return {};
-  },
   created() {
+    this.$store.dispatch("podcastStore/loadAppState");
     this.$store.dispatch("podcastStore/getStoreFeed");
   },
   computed: {
     ...mapState("podcastStore", {
-      storeFeed: state => state.storeFeed,
-      favorites: state => state.favorites
-    })
+      storeFeed: state => state.storeFeed
+    }),
+    ...mapGetters("podcastStore", ["getFavorites"])
   }
 };
 </script>

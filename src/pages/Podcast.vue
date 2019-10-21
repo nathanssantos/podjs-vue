@@ -5,13 +5,32 @@
         class="q-mr-md q-mb-md text-primary"
         :src="info.image"
         style="min-height: 200px; min-width: 200px; max-height: 200px; max-width: 200px;"
-      />
+        transition="slide-up"
+      >
+        <template v-slot:loading>
+          <q-spinner-audio color="primary" />
+        </template>
+      </q-img>
       <div class="flex column items-start justify-center q-mb-md">
         <div class="text-h4 q-mb-xs" overline>{{ info.title }}</div>
         <small class="block text-h6" style="margin-left: 2px; font-weight: 300;">{{ info.author }}</small>
-        <q-btn @click="favoritePodcast()" label="Assinar" class="q-mt-md q-px-lg" />
+        <q-btn
+          @click="isFavorited ? unfavoritePodcast() : favoritePodcast()"
+          :label="isFavorited ? 'Cancelar Assinatura' : 'Assinar' "
+          class="q-mt-md q-px-lg"
+          size="12px"
+        />
       </div>
       <p style="display: block; width: 100%; font-weight: 300;" v-html="info.description" />
+      <q-input
+        placeholder="Buscar..."
+        dark
+        dense
+        v-model="filterValue"
+        class="full-width"
+        @input="filterEpisodes(filterValue)"
+        debounce="1000"
+      />
     </header>
     <q-list dark class="q-py-md">
       <q-item
@@ -28,7 +47,12 @@
               style="width: 100px; height: 100px;"
               :src="episode.image"
               class="episode-card__image text-primary"
-            />
+              transition="slide-up"
+            >
+              <template v-slot:loading>
+                <q-spinner-audio color="primary" />
+              </template>
+            </q-img>
           </div>
           <div class="q-py-md q-pr-md">
             <q-item-label overline class="text-bold q-mb-sm text-uppercase">{{ episode.title }}</q-item-label>
@@ -46,24 +70,41 @@
 import { mapState } from "vuex";
 export default {
   name: "Podcast",
+  data() {
+    return {
+      isFavorited: null,
+      filterValue: ""
+    };
+  },
   computed: {
     ...mapState("podcastStore", {
-      episodes: state => state.fetchedPodcast.episodes,
+      episodes: state => state.fetchedPodcast.filteredEpisodes,
       info: state => state.fetchedPodcast.info,
       data: state => state.fetchedPodcast.data
     })
   },
   methods: {
     playEpisode(episode) {
+      this.$root.$emit("playEpisode");
       this.$store.dispatch("podcastStore/playEpisode", episode);
     },
+    filterEpisodes(value) {
+      this.$store.dispatch("podcastStore/filterEpisodes", value);
+    },
     favoritePodcast() {
-      let favorited = {
-        info: this.info,
-        data: this.data
-      };
-      this.$store.dispatch("podcastStore/favoritePodcast", favorited);
+      this.$store.dispatch("podcastStore/favoritePodcast", this.data.id);
+      this.isFavorited = true;
+    },
+    unfavoritePodcast() {
+      this.$store.dispatch("podcastStore/unfavoritePodcast", this.data.id);
+      this.isFavorited = false;
     }
+  },
+  mounted() {
+    this.filterEpisodes();
+    this.data.favorited
+      ? (this.isFavorited = true)
+      : (this.isFavorited = false);
   }
 };
 </script>

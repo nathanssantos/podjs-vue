@@ -38,15 +38,24 @@
           <q-img
             square
             style="width: 100px; height: 100px;"
-            class="episode-card__image"
+            class="episode-card__image text-primary"
             :src="nowPlaying.image"
+            transition="slide-up"
           />
         </q-avatar>
         <q-item-label
           overline
           class="player__title text-primary text-uppercase"
         >{{ nowPlaying.title }}</q-item-label>
-        <q-media-player color="primary" type="audio" :source="nowPlaying.audio">
+        <q-media-player
+          :autoplay="autoplay"
+          ref="player"
+          @ready="setPlayTime"
+          color="primary"
+          type="audio"
+          :source="nowPlaying.audio"
+          @timeupdate="curTime => savePlayTime(curTime)"
+        >
           <template v-slot:spinner>
             <transition name="fade" mode="out-in">
               <div class="loader flex flex-center">
@@ -64,12 +73,27 @@
 import { mapState } from "vuex";
 export default {
   name: "MyLayout",
+  data() {
+    return {
+      autoplay: false,
+      playTimeSetted: false
+    };
+  },
   computed: {
     ...mapState("podcastStore", {
       nowPlaying: state => state.nowPlaying
     })
   },
   methods: {
+    savePlayTime(playTime) {
+      this.$store.dispatch("podcastStore/savePlayTime", playTime);
+    },
+    setPlayTime() {
+      if (!this.autoplay && !this.playTimeSetted) {
+        this.playTimeSetted = true;
+        this.$refs.player.setCurrentTime(this.nowPlaying.playTime);
+      }
+    },
     minimize() {
       if (process.env.MODE === "electron") {
         this.$q.electron.remote.BrowserWindow.getFocusedWindow().minimize();
@@ -91,6 +115,9 @@ export default {
         this.$q.electron.remote.BrowserWindow.getFocusedWindow().close();
       }
     }
+  },
+  mounted() {
+    this.$root.$on("playEpisode", () => (this.autoplay = true));
   }
 };
 </script>
