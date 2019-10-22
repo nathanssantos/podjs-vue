@@ -67,7 +67,8 @@ module.exports = function (ctx) {
         'QCardSection',
         'QImg',
         'QInput',
-        'QVirtualScroll'
+        'QVirtualScroll',
+        'QExpansionItem'
       ],
 
       directives: [
@@ -109,17 +110,17 @@ module.exports = function (ctx) {
 
     // https://quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
-      pwa: false
+      pwa: true
     },
 
     // https://quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
-      // workboxPluginMode: 'InjectManifest',
+      workboxPluginMode: 'InjectManifest',
       // workboxOptions: {}, // only for NON InjectManifest
       manifest: {
-        // name: 'podjs',
-        // short_name: 'podjs',
-        // description: 'A podcast aggregator.',
+        name: 'podjs',
+        short_name: 'podjs',
+        description: 'A podcast aggregator.',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',

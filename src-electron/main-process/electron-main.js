@@ -17,7 +17,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false
-    }
+    },
+    backgroundColor: "#212121"
   })
 
   mainWindow.loadURL(process.env.APP_URL)

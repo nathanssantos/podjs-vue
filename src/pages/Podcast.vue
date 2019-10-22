@@ -12,57 +12,68 @@
         </template>
       </q-img>
       <div class="flex column items-start justify-center q-mb-md">
-        <div class="text-h4 q-mb-xs" overline>{{ info.title }}</div>
-        <small class="block text-h6" style="margin-left: 2px; font-weight: 300;">{{ info.author }}</small>
+        <div class="text-h5 q-mb-xs" overline>{{ info.title }}</div>
+        <small
+          class="block"
+          style="margin-left: 2px; font-weight: 300; font-size: 1rem;"
+        >{{ info.author }}</small>
         <q-btn
           @click="isFavorited ? unfavoritePodcast() : favoritePodcast()"
           :label="isFavorited ? 'Cancelar Assinatura' : 'Assinar' "
-          class="q-mt-md q-px-lg"
-          size="12px"
+          class="q-mt-md q-px-lg bt-sign"
+          size="10px"
         />
       </div>
-      <p style="display: block; width: 100%; font-weight: 300;" v-html="info.description" />
+      <p
+        style="font-size: 12px; display: block; width: 100%; font-weight: 300;"
+        v-html="info.description"
+      />
       <q-input
         placeholder="Buscar..."
         dark
         dense
         v-model="filterValue"
-        class="full-width"
+        class="full-width episode-search"
         @input="filterEpisodes(filterValue)"
         debounce="1000"
+        style="font-size: 12px;"
       />
     </header>
     <q-list dark class="q-py-md">
-      <q-item
-        clickable
+      <q-expansion-item
         v-for="(episode,i) in episodes"
-        @click="playEpisode(episode)"
         :key="i"
-        class="q-pa-none episode-card"
+        class="episode-card"
+        expand-icon-toggle
       >
-        <q-item-section style="display: grid; grid-template-columns: 136px 1fr;">
-          <div class="q-pl-md q-py-md">
+        <template v-slot:header>
+          <q-item-section avatar>
             <q-img
               square
-              style="width: 100px; height: 100px;"
+              style="width: 75px; height: 75px;"
               :src="episode.image"
               class="episode-card__image text-primary"
               transition="slide-up"
             >
               <template v-slot:loading>
-                <q-spinner-audio color="primary" />
+                <q-spinner-audio color="primary" size="20px" />
               </template>
             </q-img>
-          </div>
-          <div class="q-py-md q-pr-md">
-            <q-item-label overline class="text-bold q-mb-sm text-uppercase">{{ episode.title }}</q-item-label>
+          </q-item-section>
+
+          <q-item-section>
             <q-item-label
-              style="font-weight: 300; font-size: 12px; line-height: 15px !important;"
-              v-html="episode.description"
-            />
-          </div>
-        </q-item-section>
-      </q-item>
+              @click="playEpisode(episode)"
+              overline
+              style="font-size: 12px;"
+              class="episode-card__title text-white"
+            >{{ episode.title }}</q-item-label>
+          </q-item-section>
+        </template>
+        <q-card style="background: none; font-size: 12px;">
+          <q-card-section v-html="episode.description" class="q-pt-lg q-pb-xl" />
+        </q-card>
+      </q-expansion-item>
     </q-list>
   </q-page>
 </template>
@@ -108,5 +119,38 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss">
+.episode-card {
+  &__title {
+    padding: 20px 0;
+    cursor: pointer;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    &:hover {
+      color: var(--q-color-primary) !important;
+    }
+  }
+}
+
+.q-expansion-item {
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+
+.q-expansion-item--expanded {
+  background: #212121;
+}
+
+.q-expansion-item__toggle-icon {
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+  &:hover {
+    color: var(--q-color-primary) !important;
+  }
+}
+
+.bt-sign,
+.episode-search {
+  &:hover {
+    color: var(--q-color-primary) !important;
+  }
+}
 </style>

@@ -30,7 +30,7 @@
     <transition name="fade-slide" mode="out-in">
       <q-footer
         elevated
-        class="flex items-center q-pa-sm q-px-md app-footer"
+        class="flex items-center q-pa-md app-footer"
         style="background: #1a1a1a;"
         v-if="nowPlaying.audio"
       >
@@ -38,15 +38,12 @@
           <q-img
             square
             style="width: 100px; height: 100px;"
-            class="episode-card__image text-primary"
+            class="text-primary"
             :src="nowPlaying.image"
             transition="slide-up"
           />
         </q-avatar>
-        <q-item-label
-          overline
-          class="player__title text-primary text-uppercase"
-        >{{ nowPlaying.title }}</q-item-label>
+        <q-item-label overline class="player__title text-primary">{{ nowPlaying.title }}</q-item-label>
         <q-media-player
           :autoplay="autoplay"
           ref="player"
@@ -150,7 +147,7 @@ export default {
     grid-template-columns: 116px 1fr;
     .player {
       &__title {
-        font-size: 14px;
+        font-size: 12px;
         grid-column: 2/3;
         font-weight: 700;
         margin-left: 3px;

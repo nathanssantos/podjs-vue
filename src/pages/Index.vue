@@ -1,12 +1,12 @@
 <template>
   <q-page class="flex column flex-start">
     <div v-if="getFavorites.length > 0">
-      <div class="text-h4 text-white title">Meus Podcasts</div>
-      <q-list dark class="podcast-list full-width q-mb-xl">
+      <div class="text-h5 text-white title">Meus Podcasts</div>
+      <q-list dark class="podcast-list full-width q-mb-lg">
         <PodcastCard v-for="podcast in getFavorites" :key="podcast.name" :podcast="podcast" />
       </q-list>
     </div>
-    <div class="text-h4 text-white title">Top 100 Podcasts</div>
+    <div class="text-h5 text-white title">Top 100 Podcasts</div>
     <q-list dark class="podcast-list full-width">
       <PodcastCard v-for="podcast in storeFeed" :key="podcast.name" :podcast="podcast" />
     </q-list>
