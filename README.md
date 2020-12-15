@@ -1,4 +1,4 @@
-# podjs (podjs)
+# podjs-vue
 
 A podcast aggregator.
 
